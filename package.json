@@ -1,0 +1,14 @@
+{
+  "name": "jp-listed-codes",
+  "version": "1.0.0",
+  "description": "Japan(JPX) Listed Stock Code Web API",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "japan listed codes"
+  ],
+  "author": "nogamoga",
+  "license": "MIT"
+}
