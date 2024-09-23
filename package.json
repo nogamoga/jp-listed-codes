@@ -3,12 +3,14 @@
   "version": "1.0.0",
   "description": "Japan(JPX) Listed Stock Code Web API",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "scripts": {},
   "keywords": [
     "japan listed codes"
   ],
   "author": "nogamoga",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "@playwright/test": "^1.47.2",
+    "@types/node": "^22.5.5"
+  }
 }
