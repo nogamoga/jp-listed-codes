@@ -65,12 +65,21 @@ test("test", async ({ page }) => {
     }
   }
 
-  // ファイルへ保存
+  // 保存済ファイルと比較して変更がある場合は保存
   codes = codes.map((v) => v.slice(0, -1));
-  // console.log(codes);
+  const save_path = "docs/api/standard.json";
+  let saved_json = fs.readFileSync(save_path);
   try {
-    fs.writeFileSync("docs/api/standard.json", JSON.stringify(codes));
-  } catch (err) {
-    console.log(err);
+    // Update on mismatch
+    let saved_obj = JSON.parse(saved_json.toString());
+    if (saved_obj.length != codes.length) {
+      fs.writeFileSync(save_path, JSON.stringify(codes));
+    } else {
+      if (removeValues(codes, saved_obj).length > 0) {
+        fs.writeFileSync(save_path, JSON.stringify(codes));
+      }
+    }
+  } catch (e) {
+    fs.writeFileSync(save_path, JSON.stringify(codes));
   }
 });
