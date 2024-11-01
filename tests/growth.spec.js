@@ -15,18 +15,25 @@ test("test", async ({ page }) => {
   await page.goto(
     "https://www2.jpx.co.jp/tseHpFront/JJK010010Action.do?Show=Show"
   );
+  await page.waitForLoadState("load");
+
   // グロースを開く
   await page.getByRole("combobox").selectOption("200");
   await page.getByLabel("グロース", { exact: true }).check();
   // await page.getByRole("button", { name: "検索" }).click();
   await page.locator(".activeButton").click();
+  await page.waitForLoadState("domcontentloaded"); // 画面更新を待機
 
-  // 右上のページャーから全体ページ数を取得
-  const page_size = await page
-    .locator(".linkbox")
-    .nth(0)
-    .locator("a, b")
-    .count();
+  // 左上の検索結果から全体ページ数を取得
+  let text = await page
+    .getByText(/.*表示.*件中/)
+    .first()
+    .textContent();
+  let dateRegexp = /1～(?<part>\d*)件を表示／(?<all>\d*)件中/;
+  let ret = text.match(dateRegexp);
+  // console.log(ret.groups.part);
+  // console.log(ret.groups.all);
+  let page_size = Math.floor(Number(ret.groups.all) / Number(ret.groups.part));
   // console.log(page_size);
 
   let codes = [];
@@ -46,10 +53,7 @@ test("test", async ({ page }) => {
 
   // 2ページ目以降のテーブルを処理
   for (let i = 2; i <= page_size; i++) {
-    await page
-      .getByRole("link", { name: String(i) })
-      .first()
-      .click();
+    await page.getByRole("link", { name: "次へ" }).first().click();
     await page.waitForLoadState(); // テーブルの更新を待つ
 
     const tableLocator = await page.locator(".tableStyle01 tbody");
