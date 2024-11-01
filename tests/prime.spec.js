@@ -56,7 +56,7 @@ test("test", async ({ page }) => {
   }
 
   // 2ページ目以降のテーブルを処理
-  for (let i = 2; i <= page_size; i++) {
+  for (let i = 0; i < page_size; i++) {
     await page.getByRole("link", { name: "次へ" }).first().click();
     await page.waitForLoadState(); // テーブルの更新を待つ
 
