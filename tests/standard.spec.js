@@ -15,7 +15,7 @@ test("test", async ({ page }) => {
   await page.goto(
     "https://www2.jpx.co.jp/tseHpFront/JJK010010Action.do?Show=Show"
   );
-  // プライムを開く
+  // スタンダードを開く
   await page.getByRole("combobox").selectOption("200");
   await page.getByLabel("スタンダード", { exact: true }).check();
   // await page.getByRole("button", { name: "検索" }).click();
