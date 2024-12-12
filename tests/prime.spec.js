@@ -39,6 +39,10 @@ test("test", async ({ page }) => {
   // console.log(ret.groups.all);
   let page_size = Math.floor(Number(ret.groups.all) / Number(ret.groups.part));
   // console.log(page_size);
+  let remainder = Number(ret.groups.all) % Number(ret.groups.part);
+  if (remainder == 0) {
+    page_size--;
+  }
 
   let codes = [];
 
