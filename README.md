@@ -1,5 +1,6 @@
 # jp-listed-codes
 - 東証(JPX)の上場銘柄の証券コードを市場ごとにJSONで返します
+- 市場はプライム、スタンダード、グロースのみ。ETFやREITなどは含みません
 
 ## API仕様
 - **GET**：https://nogamoga.github.io/jp-listed-codes/api/prime.json
