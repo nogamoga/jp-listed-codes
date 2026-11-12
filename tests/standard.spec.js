@@ -2,18 +2,15 @@ import { test, expect } from "@playwright/test";
 import fs from "fs";
 
 // 証券コードだけを取得
-const getCodes = async (tableLocator, i) => {
-  return await tableLocator
-    .locator("tr")
-    .nth(i)
-    .locator("td:nth-child(1)")
-    .allInnerTexts();
+const getCodes = async (row) => {
+  const cells = row.locator("td");
+  return (await cells.nth(0).innerText()).trim();
 };
 
 test("test", async ({ page }) => {
   test.setTimeout(1000 * 60 * 5);
   await page.goto(
-    "https://www2.jpx.co.jp/tseHpFront/JJK010010Action.do?Show=Show"
+    "https://www2.jpx.co.jp/tseHpFront/JJK010010Action.do?Show=Show",
   );
   await page.waitForLoadState("load");
 
@@ -23,6 +20,10 @@ test("test", async ({ page }) => {
   // await page.getByRole("button", { name: "検索" }).click();
   await page.locator(".activeButton").click();
   await page.waitForLoadState("domcontentloaded"); // 画面更新を待機
+
+  // テーブルの行が表示されるまで待機
+  const rows = page.locator("table.tableStyle01 tr");
+  await expect(rows.first()).toBeVisible();
 
   // 左上の検索結果から全体ページ数を取得
   let text = await page
@@ -43,16 +44,11 @@ test("test", async ({ page }) => {
   let codes = [];
 
   // 先頭ページのテーブルを処理
-  const tableLocator = await page.locator(".tableStyle01 tbody");
-  const row_size = await tableLocator.locator("tr").count();
-  // console.log(`row_size = ${row_size}`);
-  for (let j = 0; j < row_size; j++) {
-    const second_row_text = await getCodes(tableLocator, j);
-    // console.log(second_row_text);
-    await second_row_text.forEach((text) => {
-      // console.log(text);
-      codes.push(text);
-    });
+  const tableLocator = page.locator("table.tableStyle01 tr:has(td)");
+  for (const row of await tableLocator.all()) {
+    const text = await getCodes(row);
+    // console.log(text);
+    codes.push(text);
   }
 
   // 2ページ目以降のテーブルを処理
@@ -60,21 +56,17 @@ test("test", async ({ page }) => {
     await page.getByRole("link", { name: "次へ" }).first().click();
     await page.waitForLoadState(); // テーブルの更新を待つ
 
-    const tableLocator = await page.locator(".tableStyle01 tbody");
-    const row_size = await tableLocator.locator("tr").count();
-    // console.log(`row_size = ${row_size}`);
-    for (let j = 0; j < row_size; j++) {
-      const second_row_text = await getCodes(tableLocator, j);
-      // console.log(second_row_text);
-      await second_row_text.forEach((text) => {
-        // console.log(text);
-        codes.push(text);
-      });
+    const tableLocator = page.locator("table.tableStyle01 tr:has(td)");
+    for (const row of await tableLocator.all()) {
+      const text = await getCodes(row);
+      // console.log(text);
+      codes.push(text);
     }
   }
 
   // 保存済ファイルと比較して変更がある場合は保存
   codes = codes.map((v) => v.slice(0, -1));
+  // console.log(codes);
   const save_path = "docs/api/standard.json";
   let saved_json = fs.readFileSync(save_path);
   try {
