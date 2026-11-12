@@ -11,7 +11,7 @@ const HEADLESS = true; // true: 画面なし / false: 画面表示
 // 証券コードの書式チェック用（2024年1月以降は5桁。4桁や英字入りも許容）
 const CODE_PATTERN = /^\d{4,5}[A-Z]?$/;
 
-test("test", async ({ page }) => {
+test("sample", async ({ page }) => {
   // const browser = await chromium.launch({ headless: HEADLESS });
   // try {
   // const page = await browser.newPage();
