@@ -1,41 +1,41 @@
 name: Playwright Tests
 on:
   schedule:
-    - cron: '0 16 * * *' # JST 1:00
+    - cron: "0 16 * * *" # JST 1:00
   workflow_dispatch:
 jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v7
-    - uses: actions/setup-node@v7
-      with:
-        node-version: lts/*
-    - name: Install dependencies
-      run: npm ci
-    - name: Install Playwright Browsers
-      run: npx playwright install --with-deps
-    - name: Run Playwright tests
-      run: npx playwright test
-    - name: Diff
-      id: diff
-      run: |
-        git add -N ./docs/api/
-        git diff --name-only --exit-code
-      continue-on-error: true
-    - name: Commit & Push
-      run: |
-        set -x
-        git config --local user.email "55225552+nogamoga@users.noreply.github.com"
-        git config --local user.name "nogamoga"
-        git add ./docs/api/
-        git commit -m "Update data `date +%Y-%m-%d`" -a
-        git push
-      if: steps.diff.outcome == 'failure'
-    - uses: actions/upload-artifact@v7
-      if: ${{ !cancelled() }}
-      with:
-        name: playwright-report
-        path: playwright-report/
-        retention-days: 30
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: lts/*
+      - name: Install dependencies
+        run: npm ci
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+      - name: Run Playwright tests
+        run: npx playwright test -g "test"
+      - name: Diff
+        id: diff
+        run: |
+          git add -N ./docs/api/
+          git diff --name-only --exit-code
+        continue-on-error: true
+      - name: Commit & Push
+        run: |
+          set -x
+          git config --local user.email "55225552+nogamoga@users.noreply.github.com"
+          git config --local user.name "nogamoga"
+          git add ./docs/api/
+          git commit -m "Update data `date +%Y-%m-%d`" -a
+          git push
+        if: steps.diff.outcome == 'failure'
+      - uses: actions/upload-artifact@v7
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
