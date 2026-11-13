@@ -65,7 +65,8 @@ test("test", async ({ page }) => {
 
   // 保存済ファイルと比較して変更がある場合は保存
   codes = codes.map((v) => v.slice(0, -1)); // 5桁 → 旧4桁形式（130A0 → 130A）
-  const save_path = "docs/api/growth.json";
+  // console.log(`プライム市場コード: ${codes}`);
+  const save_path = "docs/api/prime.json";
   try {
     // ※ readFileSync も try の中で行う（ファイル未存在時のクラッシュを防ぐ）
     const saved_obj = JSON.parse(fs.readFileSync(save_path, "utf8"));
